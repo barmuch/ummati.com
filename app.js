@@ -14,10 +14,8 @@ import dotenv from 'dotenv'
 import ExpressError from './utils/ExpressError.js';
 import wrapAsync from "./utils/wrapAsync.js"
 import Campaign from './models/campaign.js'
-import Article from './models/Article.js'
 import routerUser from './routes/user.js';
 import routerCampaign from './routes/campaign.js';
-import routerArticle from './routes/article.js'
 import User from './models/user.js';
 
 dotenv.config()
@@ -63,6 +61,7 @@ app.use((req, res, next) => {
 	res.locals.success_msg = req.flash('success_msg');
 	res.locals.error_msg = req.flash('error_msg');
 	res.locals.error = req.flash('error');
+	res.locals.currentPage = req.path
 	next();
 })
 
@@ -75,14 +74,17 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', wrapAsync(async (req, res) => {
     const campaigns = await Campaign.find()
-    const articles = await Article.find()
-	res.render('home', {campaigns, articles})
+	res.render('home', {campaigns,})
 }))
+
+app.get('/contact', (req, res) => {
+	res.render('contact')
+})
 
 // places routes
 app.use('/', routerUser)
 app.use('/campaigns', routerCampaign);
-app.use('/articles', routerArticle)
+
 
 
 
